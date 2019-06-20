@@ -7,7 +7,7 @@ import {
 } from '@jupyterlab/application';
 
 import {
-  ToolbarButton
+  Clipboard, Dialog, showDialog, ToolbarButton
 } from '@jupyterlab/apputils';
 
 import {
@@ -19,23 +19,11 @@ import {
 } from '@jupyterlab/notebook';
 
 import {
-  getImageSpec
+  getImageSpec, createShareLink
 } from './actions';
 
 
 const INITIAL_NETWORK_RETRY = 2; // ms
-
-/**
- * Error message if the nbdime API is unavailable.
- */
-// const serviceMissingMsg = 'Unable to query jupyterhub-share-link API. Is the hub service running?';
-
-export
-namespace CommandIDs {
-
-  export
-  const shareNotebook = 'jupyterhub-share-link:share';
-}
 
 
 /**
@@ -64,9 +52,34 @@ class ButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel
       const imageSpecPromise = getImageSpec();
       imageSpecPromise.then(imageSpec => {
         networkRetry = INITIAL_NETWORK_RETRY;
-        console.log(imageSpec);
         let path = context.path;
-        console.log(path);
+        // TODO Properly obtain these from JupyterFrontEnd.
+        const hubHost = '';
+        const hubPrefix = '/';
+        const createShareLinkPromise = createShareLink(
+          hubHost, hubPrefix, path, imageSpec);
+        createShareLinkPromise.then(shareLink => {
+          networkRetry = INITIAL_NETWORK_RETRY;
+          showDialog({
+            title: "Shareable Link",
+            body: `For the next hour, any other user on this JupyterHub who has this link will be able to fetch a copy of your latest saved version of ${path}.`,
+            buttons: [
+            Dialog.okButton({
+              label: 'Copy Link',
+            }),
+            Dialog.cancelButton({ label: 'Dismiss' }),
+          ]
+        }).then(result => result.button.accept ?
+          Clipboard.copyToSystem(shareLink) : null);
+        });
+        createShareLinkPromise.catch((reason) => {
+          if (reason.status === 404) {
+            console.log('Is the jupyter-share-link hub service running?');
+          }
+          setTimeout(() => {
+            networkRetry *= 2;
+          }, networkRetry);
+        });
       });
       imageSpecPromise.catch((reason) => {
         if (reason.status === 404) {
@@ -78,7 +91,7 @@ class ButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel
       });
     };
     let button = new ToolbarButton({
-      className: 'myButton',
+      className: 'createShareLink',
       iconClassName: 'fa fa-send',
       onClick: callback,
       tooltip: 'Create Shareable Link'

@@ -39,15 +39,13 @@ function getImageSpec(): Promise<string> {
 }
 
 export
-function createShareLink(args: {readonly path: string}): Promise<string> {
-  let request = {
-      method: 'POST',
-      body: JSON.stringify(args),
-    };
-  let settings = ServerConnection.makeSettings();
-  return ServerConnection.makeRequest(
-    URLExt.join(urlRStrip(settings.baseUrl), '/nbdime/api/isgit'),
-    request, settings).then((response) => {
+function createShareLink(hubHost: string, hubPrefix: string, path: string, imageSpec: string): Promise<string> {
+  const createUrl = hubHost + URLExt.join(hubPrefix, `/services/share-link/create`);
+  console.log(createUrl);
+  console.log(window.location.origin);
+  return fetch(createUrl, {
+    method: 'POST',
+    body: JSON.stringify({path: path, image: imageSpec})}).then((response) => {
       if (!response.ok) {
         return Promise.reject(response);
       }
