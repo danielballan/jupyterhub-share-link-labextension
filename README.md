@@ -1,6 +1,7 @@
 # jupyterhub-share-link-labextension
 
-Adds UI for sharing notebooks across Hub.
+Adds UI for sharing notebooks across Hub and a very simple server extension to
+support it.
 
 This works in cooperation with a Hub Service,
 [jupyterhub-share-link](https://github.com/danielballan/jupyterhub-share-link).

@@ -1,0 +1,7 @@
+{
+  "NotebookApp": {
+    "nbserver_extensions": {
+      "jupyterhub_share_link_serverextension": true
+    }
+  }
+}

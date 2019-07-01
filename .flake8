@@ -1,0 +1,2 @@
+[flake8]
+exclude = .git,__pycache__,build,dist,versioneer.py,jupyterhub_share_link_serverextension/_version.py,docs/source/conf.py
