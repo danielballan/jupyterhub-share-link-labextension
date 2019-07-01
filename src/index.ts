@@ -3,7 +3,7 @@ import {
 } from '@phosphor/disposable';
 
 import {
-  JupyterLab, JupyterLabPlugin
+  JupyterFrontEnd, JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
 import {
@@ -29,7 +29,7 @@ const INITIAL_NETWORK_RETRY = 2; // ms
 /**
  * The plugin registration information.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: JupyterFrontEndPlugin<void> = {
   activate,
   id: 'my-extension-name:buttonPlugin',
   autoStart: true
@@ -108,7 +108,7 @@ class ButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel
 /**
  * Activate the extension.
  */
-function activate(app: JupyterLab) {
+function activate(app: JupyterFrontEnd) {
   app.docRegistry.addWidgetExtension('Notebook', new ButtonExtension());
 };
 
