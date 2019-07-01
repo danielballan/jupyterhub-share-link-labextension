@@ -17,7 +17,7 @@ class ImageSpecHandler(IPythonHandler):
 
 def _jupyter_server_extension_paths():
     return [{
-        "module": "jupyter_expose_image_spec"
+        "module": "jupyterhub_share_link_serverextension"
     }]
 
 
