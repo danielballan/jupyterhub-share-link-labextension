@@ -1,22 +1,16 @@
 import {
-  IDisposable, DisposableDelegate
-} from '@phosphor/disposable';
-
-import {
   JupyterFrontEnd, JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
 import {
-  Clipboard, Dialog, showDialog, ToolbarButton
+  Clipboard, Dialog, showDialog
 } from '@jupyterlab/apputils';
 
 import {
-  DocumentRegistry
-} from '@jupyterlab/docregistry';
+  IFileBrowserFactory
+} from '@jupyterlab/filebrowser';
 
-import {
-  NotebookPanel, INotebookModel
-} from '@jupyterlab/notebook';
+import { toArray } from '@phosphor/algorithm';
 
 import {
   getImageSpec, createShareLink
@@ -27,32 +21,37 @@ const INITIAL_NETWORK_RETRY = 2; // ms
 
 
 /**
- * The plugin registration information.
+ * A file browser share-file plugin
+ *
+ * This extension adds a "Copy Shareable Link" command that generates a copy-
+ * pastable URL by making a request to the jupyter-share-link JupyterHub
+ * service.
  */
-const plugin: JupyterFrontEndPlugin<void> = {
-  activate,
-  id: 'my-extension-name:buttonPlugin',
+const shareFile: JupyterFrontEndPlugin<void> = {
+  activate: activateShareFile,
+  id: '@jupyterlab/filebrowser-extension:share-file',
+  requires: [IFileBrowserFactory],
   autoStart: true
-};
+  };
 
+function activateShareFile(
+  app: JupyterFrontEnd,
+  factory: IFileBrowserFactory
+): void {
+  const { commands } = app;
+  const { tracker } = factory;
 
-/**
- * A notebook widget extension that adds a button to the toolbar.
- */
-export
-class ButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
-  /**
-   * Create a new extension object.
-   */
-  createNew(panel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>): IDisposable {
-
-    let callback = () => {
+  commands.addCommand('filebrowser:share-main', {
+    execute: () => {
+      const widget = tracker.currentWidget;
+      if (!widget) {
+        return;
+      }
+      const path = encodeURI(widget.selectedItems().next().path);
       let networkRetry = INITIAL_NETWORK_RETRY;
-      // NotebookActions.runAll(panel.content, context.session);
       const imageSpecPromise = getImageSpec();
       imageSpecPromise.then(imageSpec => {
         networkRetry = INITIAL_NETWORK_RETRY;
-        let path = context.path;
         // TODO Properly obtain these from JupyterFrontEnd.
         const hubHost = '';
         const hubPrefix = '/';
@@ -89,31 +88,18 @@ class ButtonExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel
           networkRetry *= 2;
         }, networkRetry);
       });
-    };
-    let button = new ToolbarButton({
-      className: 'createShareLink',
-      iconClassName: 'fa fa-send',
-      onClick: callback,
-      tooltip: 'Create Shareable Link'
-    });
-
-    panel.toolbar.insertItem(0, 'runAll', button);
-    return new DisposableDelegate(() => {
-      button.dispose();
-    });
+    },
+    isVisible: () =>
+      tracker.currentWidget &&
+      toArray(tracker.currentWidget.selectedItems()).length === 1,
+    iconClass: 'jp-MaterialIcon jp-LinkIcon',
+    label: 'Copy Shareable Link'
+  });
   }
-}
 
-
-/**
- * Activate the extension.
- */
-function activate(app: JupyterFrontEnd) {
-  app.docRegistry.addWidgetExtension('Notebook', new ButtonExtension());
-};
 
 
 /**
  * Export the plugin as default.
  */
-export default plugin;
+export default shareFile;

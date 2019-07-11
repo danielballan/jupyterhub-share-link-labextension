@@ -1,6 +1,6 @@
 {
   "name": "jupyterhub-share-link-labextension",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Adds UI for sharing notebooks across Hub.",
   "keywords": [
     "jupyter",
@@ -32,9 +32,8 @@
   "dependencies": {
     "@jupyterlab/application": "^1.0.0",
     "@jupyterlab/apputils": "^1.0.0",
-    "@jupyterlab/docregistry": "^1.0.0",
-    "@jupyterlab/notebook": "^1.0.0",
-    "@phosphor/disposable": "^1.2.0"
+    "@jupyterlab/filebrowser": "^1.0.0",
+    "@phosphor/algorithm": "^1.1.3"
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
@@ -47,7 +46,7 @@
         "name": "jupyterhub-share-link-serverextension"
       },
       "managers": [
-          "pip"
+        "pip"
       ]
     }
   }
