@@ -41,6 +41,14 @@
     "typescript": "~3.1.1"
   },
   "jupyterlab": {
-    "extension": true
+    "extension": true,
+    "server": {
+      "base": {
+        "name": "jupyterhub-share-link-serverextension"
+      },
+      "managers": [
+          "pip"
+      ]
+    }
   }
 }
