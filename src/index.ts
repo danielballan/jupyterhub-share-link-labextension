@@ -30,14 +30,14 @@ const INITIAL_NETWORK_RETRY = 2; // ms
 const shareFile: JupyterFrontEndPlugin<void> = {
   activate: activateShareFile,
   id: '@jupyterlab/filebrowser-extension:share-file',
-  requires: [IFileBrowserFactory],
+  requires: [IFileBrowserFactory, JupyterFrontEnd.IPaths],
   autoStart: true
   };
 
 function activateShareFile(
   app: JupyterFrontEnd,
-  paths: JupyterFrontEnd.IPaths,
-  factory: IFileBrowserFactory
+  factory: IFileBrowserFactory,
+  paths: JupyterFrontEnd.IPaths
 ): void {
   const { commands } = app;
   const { tracker } = factory;
