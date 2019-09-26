@@ -36,10 +36,13 @@ const shareFile: JupyterFrontEndPlugin<void> = {
 
 function activateShareFile(
   app: JupyterFrontEnd,
+  paths: JupyterFrontEnd.IPaths,
   factory: IFileBrowserFactory
 ): void {
   const { commands } = app;
   const { tracker } = factory;
+  const hubHost = paths.urls.hubHost || '';
+  const hubPrefix = paths.urls.hubPrefix || '';
 
   commands.addCommand('filebrowser:share-main', {
     execute: () => {
@@ -52,9 +55,6 @@ function activateShareFile(
       const imageSpecPromise = getImageSpec();
       imageSpecPromise.then(imageSpec => {
         networkRetry = INITIAL_NETWORK_RETRY;
-        // TODO Properly obtain these from JupyterFrontEnd.
-        const hubHost = '';
-        const hubPrefix = '/';
         const createShareLinkPromise = createShareLink(
           hubHost, hubPrefix, path, imageSpec);
         createShareLinkPromise.then(shareLink => {
