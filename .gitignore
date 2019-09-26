@@ -88,3 +88,5 @@ target/
 
 # Avoid accidentally committing notebooks.
 *.ipynb
+
+*.tsbuildinfo

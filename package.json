@@ -19,13 +19,14 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "style": "style/index.css",
   "repository": {
     "type": "git",
     "url": "https://github.com/danielballan/jupyterhub-share-link-labextension.git"
   },
   "scripts": {
     "build": "tsc",
-    "clean": "rimraf lib",
+    "clean": "rimraf lib && rimraf tsconfig.tsbuildinfo",
     "prepare": "npm run clean && npm run build",
     "watch": "tsc -w"
   },
@@ -37,8 +38,11 @@
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
-    "typescript": "~3.1.1"
+    "typescript": "~3.5.2"
   },
+  "sideEffects": [
+    "style/*.css"
+  ],
   "jupyterlab": {
     "extension": true,
     "server": {
