@@ -43,6 +43,7 @@ function activateShareFile(
   const { tracker } = factory;
   const hubHost = paths.urls.hubHost || '';
   const hubPrefix = paths.urls.hubPrefix || '';
+  console.log('jupyterhub-share-link-labextension sees urls', paths.urls)
 
   commands.addCommand('filebrowser:share-main', {
     execute: () => {

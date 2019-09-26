@@ -1,6 +1,6 @@
 {
   "name": "jupyterhub-share-link-labextension",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Adds UI for sharing notebooks across Hub.",
   "keywords": [
     "jupyter",
