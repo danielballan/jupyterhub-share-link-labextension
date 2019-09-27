@@ -1,4 +1,8 @@
 import {
+  URLExt
+} from '@jupyterlab/coreutils';
+
+import {
   JupyterFrontEnd, JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
@@ -42,8 +46,12 @@ function activateShareFile(
   const { commands } = app;
   const { tracker } = factory;
   const hubHost = paths.urls.hubHost || '';
-  const hubPrefix = paths.urls.hubPrefix || '';
-  console.log('jupyterhub-share-link-labextension sees urls', paths.urls)
+  const hubPrefix = paths.urls.hubPrefix || '/hub/';
+  /**
+  * Per @ian-r-rose, this is the best way to get the services URL for now,
+  * but maybe in the future JupyterLab will add a hubServices path.
+  */
+  const hubServices = URLExt.join(hubPrefix.slice(0, -4), `services/`);
 
   commands.addCommand('filebrowser:share-main', {
     execute: () => {
@@ -57,7 +65,7 @@ function activateShareFile(
       imageSpecPromise.then(imageSpec => {
         networkRetry = INITIAL_NETWORK_RETRY;
         const createShareLinkPromise = createShareLink(
-          hubHost, hubPrefix, path, imageSpec);
+          hubHost, hubServices, path, imageSpec);
         createShareLinkPromise.then(shareLink => {
           networkRetry = INITIAL_NETWORK_RETRY;
           showDialog({

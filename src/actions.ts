@@ -39,8 +39,8 @@ function getImageSpec(): Promise<string> {
 }
 
 export
-function createShareLink(hubHost: string, hubPrefix: string, path: string, imageSpec: string): Promise<string> {
-  const createUrl = hubHost + URLExt.join(hubPrefix, `/services/share-link/create`);
+function createShareLink(hubHost: string, hubServices: string, path: string, imageSpec: string): Promise<string> {
+  const createUrl = hubHost + URLExt.join(hubServices, `share-link/create`);
   console.log(createUrl);
   console.log(window.location.origin);
   return fetch(createUrl, {
