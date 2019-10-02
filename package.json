@@ -44,14 +44,6 @@
     "style/*.css"
   ],
   "jupyterlab": {
-    "extension": true,
-    "server": {
-      "base": {
-        "name": "jupyterhub-share-link-serverextension"
-      },
-      "managers": [
-        "pip"
-      ]
-    }
+    "extension": true
   }
 }

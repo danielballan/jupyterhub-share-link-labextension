@@ -2,50 +2,25 @@ import {
   URLExt
 } from '@jupyterlab/coreutils';
 
-import {
-  ServerConnection
-} from '@jupyterlab/services';
-
-import {
-  urlRStrip
-} from './utils';
-
-
-interface ImageSpecApiResponse {
-  JUPYTER_IMAGE_SPEC: string;
-}
 
 interface CreateShareLinkApiResponse {
   link: string;
 }
 
 
-export
-function getImageSpec(): Promise<string> {
-  let request = {
-      method: 'GET',
-    };
-  let settings = ServerConnection.makeSettings();
-  return ServerConnection.makeRequest(
-    URLExt.join(urlRStrip(settings.baseUrl), '/image-spec'),
-    request, settings).then((response) => {
-      if (!response.ok) {
-        return Promise.reject(response);
-      }
-      return response.json() as Promise<ImageSpecApiResponse>;
-    }).then((data) => {
-      return data['JUPYTER_IMAGE_SPEC'];
-    });
-}
+// TODO
+// When this commit is released (looks like it's in 2.0.0alpha1 currently...)
+// https://github.com/jupyterlab/jupyterlab/commit/b750683f727485ea594d75d8efe7c0b29ecf4937
+// then user the new `hubServerName` instead of `base`.
 
 export
-function createShareLink(hubHost: string, hubServices: string, path: string, imageSpec: string): Promise<string> {
+function createShareLink(hubHost: string, hubServices: string, base: string, path: string): Promise<string> {
   const createUrl = hubHost + URLExt.join(hubServices, `share-link/create`);
   console.log(createUrl);
   console.log(window.location.origin);
   return fetch(createUrl, {
     method: 'POST',
-    body: JSON.stringify({path: path, image: imageSpec})}).then((response) => {
+    body: JSON.stringify({path: path, base_url: base})}).then((response) => {
       if (!response.ok) {
         return Promise.reject(response);
       }
